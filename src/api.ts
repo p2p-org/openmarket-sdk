@@ -1,8 +1,14 @@
 // import axios from 'axios'
 import { IS_DEV } from './environment'
 import { GQLClient } from './gqlclient'
-import { qNftById, qNftList } from './gqlqueries'
-import { DGMarketAPIConfig, Network } from './types'
+import {qNftBids, qNftById, qNftList, qNftOffers, qNfts} from './gqlqueries'
+import {
+  DGMarketAPIConfig,
+  DGMarketQueryNFTBidParams,
+  DGMarketQueryNFTOfferParams,
+  DGMarketQueryNFTParams,
+  Network
+} from './types'
 
 export const API_VERSION = 1
 export const API_BASE_MAINNET = 'https://api.market.ggaming.com'
@@ -95,9 +101,63 @@ export class DGMarketAPI {
         variables: { tokenId },
       })
       // tslint:disable-next-line:no-console
-      console.log(data)
+      // console.log(data)
       const result = data.nfts.length ? data.nfts.pop() : null
       return result
+    } catch (e) {
+      if (e instanceof Error) {
+        this._handleError(e)
+      } else {
+        throw e
+      }
+    }
+  }
+
+  public async getNfts(params?: DGMarketQueryNFTParams): Promise<any> {
+    try {
+      const { data } = await this.gql.query({
+        query: qNfts,
+        variables: params,
+      })
+      // tslint:disable-next-line:no-console
+      // console.log(data)
+      return data.nfts || []
+    } catch (e) {
+      if (e instanceof Error) {
+        this._handleError(e)
+      } else {
+        throw e
+      }
+    }
+  }
+
+  public async getNftOffers(params?: DGMarketQueryNFTOfferParams): Promise<any> {
+    try {
+      const { data } = await this.gql.query({
+        query: qNftOffers,
+        variables: params,
+      })
+      // tslint:disable-next-line:no-console
+      // console.log(data)
+      return data.offers || []
+    } catch (e) {
+      if (e instanceof Error) {
+        this._handleError(e)
+      } else {
+        throw e
+      }
+    }
+  }
+
+  public async getNftBids(params?: DGMarketQueryNFTBidParams): Promise<any> {
+    try {
+      const { data } = await this.gql.query({
+        query: qNftBids,
+        variables: params,
+      })
+      // tslint:disable-next-line:no-console
+      // console.log(data)
+      return data.auction_bids || []
     } catch (e) {
       if (e instanceof Error) {
         this._handleError(e)

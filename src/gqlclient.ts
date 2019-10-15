@@ -10,13 +10,16 @@ import {
 // import {Observable} from "apollo-client/util/Observable";
 import {
   // FetchResult,
-  split
+  split,
 } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 import 'isomorphic-unfetch'
-// import WebSocket from 'ws'
+import ws from 'ws'
+
+// tslint:disable-next-line:variable-name
+const _global = typeof global !== 'undefined' ? global : typeof window !== 'undefined' ? window : {}
 
 // Create a WebSocket link
 const wsLink = (uri: string) =>
@@ -25,7 +28,8 @@ const wsLink = (uri: string) =>
       reconnect: true,
     },
     uri,
-    // webSocketImpl: ws,
+    // @ts-ignore
+    webSocketImpl: _global.WebSocket || _global.MozWebSocket ? null : ws,
   })
 
 // Create an http link
@@ -90,12 +94,14 @@ export class GQLClient {
   // mutate<T = any, TVariables = OperationVariables>(options: MutationOptions<T, TVariables>): Promise<FetchResult<T>>;
   // subscribe<T = any, TVariables = OperationVariables>(options: SubscriptionOptions<TVariables>): Observable<FetchResult<T>>;
 
-  public async query<T = any, TVariables = OperationVariables>(options: QueryOptions<TVariables>): Promise<ApolloQueryResult<T>> {
+  public async query<T = any, TVariables = OperationVariables>(
+    options: QueryOptions<TVariables>
+  ): Promise<ApolloQueryResult<T>> {
     // tslint:disable-next-line:no-console
-    console.log(options)
+    // console.log(options)
     const res = await this.client.query(options)
     // tslint:disable-next-line:no-console
-    console.log(res)
+    // console.log(res)
     return res
   }
   // public mutate<T = any, TVariables = OperationVariables>(options: MutationOptions<TVariables>): Promise<FetchResult<T>> {
