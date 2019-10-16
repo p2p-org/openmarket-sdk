@@ -83,7 +83,7 @@
     "tslint": "^5.18.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-immutable": "^6.0.1",
-    "typescript": "^3.5.3",
+    "typescript": "^3.6.4",
     "typescript-tslint-plugin": "^0.5.4"
   },
   "ava": {

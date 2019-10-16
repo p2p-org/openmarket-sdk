@@ -65,6 +65,7 @@ export const qNftOffers = gql`
                 status
             }
             created_at
+            updated_at
         }
     }
 `
@@ -91,6 +92,7 @@ export const qNftBids = gql`
             bidder_address
             price
             created_at
+            updated_at
             nft {
                 id
                 owner_address
@@ -123,7 +125,11 @@ export const qNfts = gql`
             }
             offset: $offset
             limit: $limit
-            #      order_by: { status: $ordStatus, price: $ordPrice }
+            order_by: { 
+                created_at: asc,
+#                status: $ordStatus,
+#                price: $ordPrice
+            }
         ) {
             id
             token_id
@@ -131,6 +137,7 @@ export const qNfts = gql`
             buyout_price
             status
             created_at
+            updated_at
             time_to_sell
             opening_price
             auction_bids {
