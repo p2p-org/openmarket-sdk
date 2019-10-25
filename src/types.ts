@@ -1,3 +1,5 @@
+import {FetchPolicy} from "apollo-client";
+
 export enum Network {
   Main = 'main',
   Rinkeby = 'rinkeby',
@@ -26,6 +28,7 @@ export interface DGMarketAPIConfig {
   readonly apiBaseUrl?: string
   readonly gqlHttpUrl?: string
   readonly gqlWsUrl?: string
+  readonly fetchPolicy?: FetchPolicy
 }
 
 export interface DGMarketGQLConfig {
@@ -69,4 +72,7 @@ export interface DGMarketQueryNFTBidParams {
   readonly orderPrice?: SortOrder
   readonly minPrice?: string
   readonly maxPrice?: string
+}
+export interface DGMarketQueryUserParams {
+  readonly address?: string
 }

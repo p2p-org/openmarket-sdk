@@ -31,6 +31,17 @@ export const qNftById = gql`
     }
 `
 
+export const qUser = gql`
+    query ($address: String!) {
+        users(where: {address: {_eq: $address}}) {
+            account_number
+            balance
+            sequence_number
+            address
+        }
+    }
+`
+
 // export const gameQuery = info => gql`query ($id: ID!) { game(id: $id) { ${info} } }`
 
 export const qNftOffers = gql`

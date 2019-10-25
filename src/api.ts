@@ -1,12 +1,20 @@
 // import axios from 'axios'
+import {FetchPolicy} from "apollo-client";
 import { IS_DEV } from './environment'
 import { GQLClient } from './gqlclient'
-import {qNftBids, qNftById, qNftList, qNftOffers, qNfts} from './gqlqueries'
+import {
+  qNftBids,
+  qNftById,
+  qNftList,
+  qNftOffers,
+  qNfts,
+  qUser
+} from './gqlqueries'
 import {
   DGMarketAPIConfig,
   DGMarketQueryNFTBidParams,
   DGMarketQueryNFTOfferParams,
-  DGMarketQueryNFTParams,
+  DGMarketQueryNFTParams, DGMarketQueryUserParams,
   Network
 } from './types'
 
@@ -31,6 +39,7 @@ export class DGMarketAPI {
   private readonly gqlHttpUrl: string
   private readonly gqlWsUrl: string
   private readonly gql: GQLClient
+  private readonly fetchPolicy: FetchPolicy
 
   /**
    * Create an instance of the Market API
@@ -49,6 +58,8 @@ export class DGMarketAPI {
         this.apiBaseUrl = config.apiBaseUrl || API_BASE_MAINNET
         break
     }
+
+    this.fetchPolicy = config.fetchPolicy || 'cache-first'
 
     // Debugging: default to nothing
     this.logger = logger || ((arg: string) => arg)
@@ -77,8 +88,8 @@ export class DGMarketAPI {
   public async getAllNft(): Promise<any> {
     try {
       const { data } = await this.gql.query({
-        // tslint:disable-next-line: no-unsafe-any
-        query: qNftList,
+        fetchPolicy: this.fetchPolicy,
+        query: qNftList
       })
       return data.nfts || []
     } catch (e) {
@@ -96,7 +107,7 @@ export class DGMarketAPI {
   public async getOneNft(tokenId: string): Promise<any> {
     try {
       const { data } = await this.gql.query({
-        // tslint:disable-next-line: no-unsafe-any
+        fetchPolicy: this.fetchPolicy,
         query: qNftById,
         variables: { tokenId },
       })
@@ -116,6 +127,7 @@ export class DGMarketAPI {
   public async getNfts(params?: DGMarketQueryNFTParams): Promise<any> {
     try {
       const { data } = await this.gql.query({
+        fetchPolicy: this.fetchPolicy,
         query: qNfts,
         variables: params,
       })
@@ -134,6 +146,7 @@ export class DGMarketAPI {
   public async getNftOffers(params?: DGMarketQueryNFTOfferParams): Promise<any> {
     try {
       const { data } = await this.gql.query({
+        fetchPolicy: this.fetchPolicy,
         query: qNftOffers,
         variables: params,
       })
@@ -152,12 +165,32 @@ export class DGMarketAPI {
   public async getNftBids(params?: DGMarketQueryNFTBidParams): Promise<any> {
     try {
       const { data } = await this.gql.query({
+        fetchPolicy: this.fetchPolicy,
         query: qNftBids,
         variables: params,
       })
       // tslint:disable-next-line:no-console
       // console.log(data)
       return data.auction_bids || []
+    } catch (e) {
+      if (e instanceof Error) {
+        this._handleError(e)
+      } else {
+        throw e
+      }
+    }
+  }
+
+  public async getUser(params?: DGMarketQueryUserParams): Promise<any> {
+    try {
+      const { data } = await this.gql.query({
+        fetchPolicy: this.fetchPolicy,
+        query: qUser,
+        variables: params,
+      })
+      // tslint:disable-next-line:no-console
+      // console.log(data)
+      return data.users || []
     } catch (e) {
       if (e instanceof Error) {
         this._handleError(e)
