@@ -1,14 +1,18 @@
 {
   "name": "dgaming-market-sdk",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "DGaming Market API SDK",
   "main": "build/main/index.js",
   "types": "dist/main/index.d.ts",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
-  "repository": "https://github.com/krogla/dgaming-market-sdk",
+  "repository": "https://github.com/dgamingfoundation/dgaming-market-sdk",
+  "author": "KRogLA <i@krogla.me>",
   "license": "MIT",
   "keywords": [],
+  "files": [
+    "/build"
+  ],
   "scripts": {
     "describe": "npm-scripts-info",
     "build": "run-s clean && run-p build:*",
