@@ -26,7 +26,7 @@ export interface DGMarketAPIConfig {
   readonly networkName?: Network
   readonly apiKey?: string
   readonly apiBaseUrl?: string
-  readonly gqlHttpUrl?: string
+  readonly gqlHttpUrl: string
   readonly gqlWsUrl?: string
   readonly fetchPolicy?: FetchPolicy
 }

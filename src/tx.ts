@@ -1,7 +1,7 @@
 import bech32 from "bech32"
-import bip32 from "bip32"
-import bip39 from 'bip39'
-import bitcoinjs from 'bitcoinjs-lib'
+import { fromSeed } from "bip32"
+import { mnemonicToSeed } from "bip39"
+import { ECPair } from 'bitcoinjs-lib'
 import crypto from "crypto"
 import fetch from "node-fetch"
 import secp256k1 from "secp256k1"
@@ -43,8 +43,8 @@ export class DGTxAPI {
   }
 
   public getAddress(mnemonic: string): string {
-    const seed = bip39.mnemonicToSeed(mnemonic)
-    const node = bip32.fromSeed(seed)
+    const seed = mnemonicToSeed(mnemonic)
+    const node = fromSeed(seed)
     const child = node.derivePath(this.path)
     const words = bech32.toWords(child.identifier)
     return bech32.encode(this.bech32MainPrefix, words)
@@ -57,13 +57,13 @@ export class DGTxAPI {
   }
 
   public getECPairPriv(mnemonic: string): Buffer|undefined {
-    const seed = bip39.mnemonicToSeed(mnemonic);
-    const node = bip32.fromSeed(seed);
+    const seed = mnemonicToSeed(mnemonic);
+    const node = fromSeed(seed);
     const child = node.derivePath(this.path);
     if (!child.privateKey) {
       throw new Error('private key error')
     }
-    const ecpair = bitcoinjs.ECPair.fromPrivateKey(child.privateKey, {compressed : false})
+    const ecpair = ECPair.fromPrivateKey(child.privateKey, {compressed : false})
     return ecpair.privateKey;
   }
 

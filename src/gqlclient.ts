@@ -78,13 +78,13 @@ export class GQLClient {
    * @param wsEndpoint GraphQL web socket endpoint lcdUrl
    * @param logger Optional function for logging debug strings before and after requests are made
    */
-  constructor(httpEndpoint: string, wsEndpoint: string, logger?: (arg: string) => void) {
+  constructor(httpEndpoint: string, wsEndpoint?: string, logger?: (arg: string) => void) {
     this.client = new ApolloClient({
       cache: new InMemoryCache({
         addTypename: false,
       }),
       connectToDevTools: true,
-      link: link(wsEndpoint, httpEndpoint), // concat(authMiddleware, link(wsEndpoint, httpEndpoint)),
+      link: wsEndpoint ? link(wsEndpoint, httpEndpoint) : httpLink(httpEndpoint), // concat(authMiddleware, link(wsEndpoint, httpEndpoint)),
     })
 
     // Debugging: default to nothing

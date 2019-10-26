@@ -64,8 +64,12 @@ export class DGMarketAPI {
     // Debugging: default to nothing
     this.logger = logger || ((arg: string) => arg)
 
-    this.gqlWsUrl = config.gqlWsUrl || 'ws://localhost:8080/v1/graphql'
-    this.gqlHttpUrl = config.gqlHttpUrl || 'http://localhost:8080/v1/graphql'
+    if (!config.gqlHttpUrl) {
+      throw new Error("gqlHttpUrl required")
+    }
+
+    this.gqlHttpUrl = config.gqlHttpUrl
+    this.gqlWsUrl = config.gqlWsUrl || ''
 
     this.gql = new GQLClient(this.gqlHttpUrl, this.gqlWsUrl, logger)
   }
