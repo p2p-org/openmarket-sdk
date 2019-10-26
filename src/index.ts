@@ -3,6 +3,8 @@
 // export * from './lib/number';
 import { DGMarketAPI } from './api'
 import { DGMarket } from './market'
+import * as DGTxMsgs from './msgs'
+import { DGTxAPI } from './tx'
 import { Network } from './types'
 
 export {
@@ -12,4 +14,6 @@ export {
   DGMarketAPI,
   // Types to help initialize SDK and listen to events.
   Network,
+  DGTxAPI,
+  DGTxMsgs
 }

@@ -26,7 +26,7 @@ export const API_BASE_RINKEBY = 'https://rinkeby-api.market.ggaming.com'
 
 export class DGMarketAPI {
   /**
-   * Base url for the API
+   * Base lcdUrl for the API
    */
   public readonly apiBaseUrl: string
   /**

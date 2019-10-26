@@ -31,6 +31,20 @@ export interface DGMarketAPIConfig {
   readonly fetchPolicy?: FetchPolicy
 }
 
+export interface DGTxConfig {
+  readonly lcdUrl: string
+  readonly chainId: string
+  readonly path?: string
+  readonly bech32MainPrefix?: string
+}
+
+export interface TxMessageParams {
+  // readonly type: string
+  // readonly msg: string
+  // readonly fee: string
+  readonly [key: string]: any
+}
+
 export interface DGMarketGQLConfig {
   readonly httpEndpoint?: string
   readonly wsEndpoint?: string

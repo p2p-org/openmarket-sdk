@@ -74,8 +74,8 @@ export class GQLClient {
 
   /**
    * Create an instance of the Market API
-   * @param httpEndpoint GraphQL http endpoint url
-   * @param wsEndpoint GraphQL web socket endpoint url
+   * @param httpEndpoint GraphQL http endpoint lcdUrl
+   * @param wsEndpoint GraphQL web socket endpoint lcdUrl
    * @param logger Optional function for logging debug strings before and after requests are made
    */
   constructor(httpEndpoint: string, wsEndpoint: string, logger?: (arg: string) => void) {
