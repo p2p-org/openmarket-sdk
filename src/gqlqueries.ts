@@ -37,7 +37,17 @@ export const qUser = gql`
             account_number
             balance
             sequence_number
-            address
+            items_on_sale: nfts_aggregate(where: {status: {_neq: 0}}) {
+                aggregate {
+                    count(distinct: true)
+                }
+            }
+            items_owned: nfts_aggregate {
+                aggregate {
+                    count(distinct: true)
+                }
+            }
+
         }
     }
 `
@@ -163,6 +173,29 @@ export const qNfts = gql`
                 price
                 buyer
                 offer_id
+            }
+        }
+    }
+`
+
+export const qUsers = gql`
+    query User(
+        $user: String
+    ) {
+        users(
+            where: {
+                address: {_ilike: $user }
+            }
+        ) {
+            items_sale: nfts_aggregate(where: {status: {_neq: 0}}) {
+                aggregate {
+                    count(distinct: true)
+                }
+            }
+            items_owned: nfts_aggregate {
+                aggregate {
+                    count(distinct: true)
+                }
             }
         }
     }

@@ -20,7 +20,7 @@ export class DGMarket {
    * @param logger logger, optional, a function that will be called with debugging
    *  information
    */
-  constructor(provider: DGProvider, apiConfig: DGMarketAPIConfig = {}, logger?: (arg: string) => void) {
+  constructor(provider: DGProvider, apiConfig: DGMarketAPIConfig, logger?: (arg: string) => void) {
     // API config
     this.api = new DGMarketAPI(apiConfig)
 
