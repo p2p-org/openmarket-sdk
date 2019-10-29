@@ -34,6 +34,7 @@ export const qNftById = gql`
 export const qUser = gql`
     query ($address: String!) {
         users(where: {address: {_eq: $address}}) {
+            address
             account_number
             balance
             sequence_number
@@ -154,7 +155,20 @@ export const qNfts = gql`
         ) {
             id
             token_id
-            owner_address
+#            owner_address
+            owner: user {
+                address
+                items_on_sale: nfts_aggregate(where: {status: {_neq: 0}}) {
+                    aggregate {
+                        count(distinct: true)
+                    }
+                }
+                items_owned: nfts_aggregate {
+                    aggregate {
+                        count(distinct: true)
+                    }
+                }
+            }
             buyout_price
             status
             created_at
@@ -173,29 +187,6 @@ export const qNfts = gql`
                 price
                 buyer
                 offer_id
-            }
-        }
-    }
-`
-
-export const qUsers = gql`
-    query User(
-        $user: String
-    ) {
-        users(
-            where: {
-                address: {_ilike: $user }
-            }
-        ) {
-            items_sale: nfts_aggregate(where: {status: {_neq: 0}}) {
-                aggregate {
-                    count(distinct: true)
-                }
-            }
-            items_owned: nfts_aggregate {
-                aggregate {
-                    count(distinct: true)
-                }
             }
         }
     }
