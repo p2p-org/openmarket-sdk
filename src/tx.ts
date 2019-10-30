@@ -1,6 +1,6 @@
 import bech32 from "bech32"
 import { fromSeed } from "bip32"
-import { mnemonicToSeed } from "bip39"
+import { generateMnemonic, mnemonicToSeed } from "bip39"
 import { ECPair } from 'bitcoinjs-lib'
 import crypto from "crypto"
 import fetch from "node-fetch"
@@ -42,6 +42,11 @@ export class DGTxAPI {
     this.logger = logger || ((arg: string) => arg)
   }
 
+  public randomMnemonic(strength?: number): string {
+    // 128 <= strength <= 256, strength % 32 === 0
+    return generateMnemonic(strength)
+  }
+
   public getAddress(mnemonic: string): string {
     const seed = mnemonicToSeed(mnemonic)
     const node = fromSeed(seed)
@@ -66,6 +71,11 @@ export class DGTxAPI {
     const ecpair = ECPair.fromPrivateKey(child.privateKey, {compressed : false})
     return ecpair.privateKey;
   }
+
+  // public getECPairPrivFromPK(privateKey: Buffer): Buffer|undefined {
+  //   const ecpair = ECPair.fromPrivateKey(privateKey, {compressed : false})
+  //   return ecpair.privateKey;
+  // }
 
   public broadcast(signedTx: object): Promise<any> {
     const broadcastApi = this.chainId.indexOf(MPCHAIN) !== -1 ? "/marketplace/txs" : "/txs";
