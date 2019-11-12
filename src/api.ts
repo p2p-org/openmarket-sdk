@@ -3,9 +3,9 @@ import {FetchPolicy} from "apollo-client";
 import { IS_DEV } from './environment'
 import { GQLClient } from './gqlclient'
 import {
+  qNftAll,
   qNftBids,
   qNftById,
-  qNftList,
   qNftOffers,
   qNfts,
   qUser
@@ -93,7 +93,7 @@ export class DGMarketAPI {
     try {
       const { data } = await this.gql.query({
         fetchPolicy: this.fetchPolicy,
-        query: qNftList
+        query: qNftAll
       })
       return data.nfts || []
     } catch (e) {

@@ -88,6 +88,20 @@ export class DGTxAPI {
       method: 'POST',
     })
       .then((response) => response.json())
+      // .then(tx => this.txCheck(tx))
+  }
+
+  public txCheck(tx: any): Promise<any>  {
+    return new Promise((resolve, reject) => {
+      let log: any = null
+      if (tx && tx.result && tx.result.logs && tx.result.logs.length) {
+        log = tx.result.logs[0]
+        if (log.success) {
+          return resolve(tx.result.txhash)
+        }
+      }
+      reject(new Error(log && log.message ? log.message : 'unknown tx error'))
+    })
   }
 
   public sign(signMessage: TxMessageParams, ecpairPriv: Buffer, modeType = "sync"): object {

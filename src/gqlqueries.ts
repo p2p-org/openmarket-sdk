@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const qNftList = gql`
+export const qNftAll = gql`
     query allNft {
         nfts {
             token_id
@@ -17,7 +17,10 @@ export const qNftList = gql`
 `
 export const qNftById = gql`
     query oneNft($tokenId: String!) {
-        nfts(where: { token_id: { _like: $tokenId } }) {
+        nfts(where: {
+            token_id: { _like: $tokenId }
+            deleted_at: {_is_null: true}
+        }) {
             token_id
             token_uri
             user {
@@ -33,7 +36,10 @@ export const qNftById = gql`
 
 export const qUser = gql`
     query ($address: String!) {
-        users(where: {address: {_eq: $address}}) {
+        users(where: {
+            address: {_eq: $address}
+            deleted_at: {_is_null: true}
+        }) {
             address
             account_number
             balance
@@ -71,7 +77,8 @@ export const qNftOffers = gql`
                 token_id: {_eq: $tokenId},
                 buyer: {_ilike: $buyer},
                 nft: { owner_address: {_ilike: $owner} },
-                #                price: {_gte: $minPrice, _lte: $maxPrice}
+#                price: {_gte: $minPrice, _lte: $maxPrice}
+                deleted_at: {_is_null: true}
             },
             offset: $offset, limit: $limit,
             #            order_by: {price: $ordPrice}
@@ -108,6 +115,7 @@ export const qNftBids = gql`
                 token_id: { _eq: $tokenId }
                 bidder_address: { _ilike: $bidder }
                 nft: { owner_address: { _ilike: $owner } }
+                deleted_at: {_is_null: true}
             }
             #            price: { _gte: $minPrice, _lte: $maxPrice }
         ) {
@@ -144,6 +152,7 @@ export const qNfts = gql`
                 token_id: { _ilike: $tokenId }
                 owner_address: { _ilike: $owner }
                 #        price: { _gte: $minPrice, _lte: $maxPrice }
+                deleted_at: {_is_null: true}
             }
             offset: $offset
             limit: $limit
