@@ -8,13 +8,16 @@ import {
   qNftById,
   qNftOffers,
   qNfts,
+  qTxMsgs,
   qUser
 } from './gqlqueries'
 import {
   DGMarketAPIConfig,
   DGMarketQueryNFTBidParams,
   DGMarketQueryNFTOfferParams,
-  DGMarketQueryNFTParams, DGMarketQueryUserParams,
+  DGMarketQueryNFTParams,
+  DGMarketQueryTxMsgParams,
+  DGMarketQueryUserParams,
   Network
 } from './types'
 
@@ -176,6 +179,25 @@ export class DGMarketAPI {
       // tslint:disable-next-line:no-console
       // console.log(data)
       return data.auction_bids || []
+    } catch (e) {
+      if (e instanceof Error) {
+        this._handleError(e)
+      } else {
+        throw e
+      }
+    }
+  }
+
+  public async getTxMsgs(params?: DGMarketQueryTxMsgParams): Promise<any> {
+    try {
+      const { data } = await this.gql.query({
+        fetchPolicy: this.fetchPolicy,
+        query: qTxMsgs,
+        variables: params,
+      })
+      // tslint:disable-next-line:no-console
+      // console.log(data)
+      return data.messages && data.messages.length ? data.messages[0] : null
     } catch (e) {
       if (e instanceof Error) {
         this._handleError(e)

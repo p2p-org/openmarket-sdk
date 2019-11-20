@@ -77,6 +77,7 @@ export interface DGMarketQueryNFTOfferParams {
   readonly minPrice?: string
   readonly maxPrice?: string
 }
+
 export interface DGMarketQueryNFTBidParams {
   readonly tokenId?: string
   readonly owner?: string
@@ -87,6 +88,11 @@ export interface DGMarketQueryNFTBidParams {
   readonly minPrice?: string
   readonly maxPrice?: string
 }
+
 export interface DGMarketQueryUserParams {
   readonly address?: string
+}
+
+export interface DGMarketQueryTxMsgParams {
+  readonly hash?: string
 }

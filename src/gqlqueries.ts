@@ -63,20 +63,20 @@ export const qUser = gql`
 
 export const qNftOffers = gql`
     query (
-        $tokenId: String,
-        $offset: Int,
-        $limit: Int,
-        $owner: String,
-        $buyer: String,
+        $tokenId: String
+        $offset: Int
+        $limit: Int
+        $owner: String
+        $buyer: String
         #        $ordPrice: order_by = asc,
         #        $minPrice: String,
         #        $maxPrice: String
     ) {
         offers(
             where: {
-                token_id: {_eq: $tokenId},
-                buyer: {_ilike: $buyer},
-                nft: { owner_address: {_ilike: $owner} },
+                token_id: {_eq: $tokenId}
+                buyer: {_ilike: $buyer}
+                nft: { owner_address: {_ilike: $owner} }
 #                price: {_gte: $minPrice, _lte: $maxPrice}
                 deleted_at: {_is_null: true}
             },
@@ -156,15 +156,16 @@ export const qNfts = gql`
             }
             offset: $offset
             limit: $limit
-            order_by: { 
-                created_at: asc,
-#                status: $ordStatus,
+            order_by: {
+                token_id: desc
+#                created_at: asc,
+#                status: $ordStatus,    
 #                price: $ordPrice
             }
         ) {
             id
             token_id
-#            owner_address
+            price
             owner: user {
                 address
                 items_on_sale: nfts_aggregate(where: {status: {_neq: 0}}) {
@@ -184,19 +185,42 @@ export const qNfts = gql`
             updated_at
             time_to_sell
             opening_price
-            auction_bids {
-                id
-                price
-                created_at
-                bidder_address
+        }
+    }
+`
+
+// auction_bids {
+//   id
+//   price
+//   created_at
+//   bidder_address
+// }
+// offers(where: {deleted_at: {_is_null: true}}) {
+//   id
+//   price
+//   buyer
+//   offer_id
+// }
+
+
+
+export const qTxMsgs = gql`
+    query TxMsg ($hash: String, $search: String) {
+        messages(where: {
+            tx: { hash: { _eq: $hash } }
+            signature: { _ilike: $search }
+        }) {
+            msg_type
+            signature
+            tx {
+                log
+                hash
+                index
+                height
             }
-            price
-            offers {
-                id
-                price
-                buyer
-                offer_id
-            }
+            signers
+            failed
+            error
         }
     }
 `

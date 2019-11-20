@@ -438,7 +438,7 @@ export function NewMsgMakeBidOnAuction(input: TxMessageParams): object {
         beneficiary_commission: input.commission,
         bid: [{
           amount: String(input.price.amount),
-          denom: input.opening_price.denom
+          denom: input.price.denom
         }],
         bidder: input.bidder,
         buyer_beneficiary: input.beneficiary,
