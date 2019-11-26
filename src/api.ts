@@ -1,24 +1,16 @@
 // import axios from 'axios'
-import {FetchPolicy} from "apollo-client";
+import { FetchPolicy } from 'apollo-client'
 import { IS_DEV } from './environment'
 import { GQLClient } from './gqlclient'
+import { qNftAll, qNftBids, qNftById, qNftOffers, qNfts, qTxMsgs, qUser } from './gqlqueries'
 import {
-  qNftAll,
-  qNftBids,
-  qNftById,
-  qNftOffers,
-  qNfts,
-  qTxMsgs,
-  qUser
-} from './gqlqueries'
-import {
-  DGMarketAPIConfig,
-  DGMarketQueryNFTBidParams,
-  DGMarketQueryNFTOfferParams,
-  DGMarketQueryNFTParams,
-  DGMarketQueryTxMsgParams,
-  DGMarketQueryUserParams,
-  Network
+  Network,
+  OpenMarketAPIConfig,
+  OpenMarketQueryNFTBidParams,
+  OpenMarketQueryNFTOfferParams,
+  OpenMarketQueryNFTParams,
+  OpenMarketQueryTxMsgParams,
+  OpenMarketQueryUserParams,
 } from './types'
 
 export const API_VERSION = 1
@@ -27,7 +19,7 @@ export const API_BASE_RINKEBY = 'https://rinkeby-api.market.ggaming.com'
 
 // const API_PATH = `/api/v${API_VERSION}`
 
-export class DGMarketAPI {
+export class OpenMarketAPI {
   /**
    * Base lcdUrl for the API
    */
@@ -38,7 +30,7 @@ export class DGMarketAPI {
   public readonly logger: (arg: string) => void
 
   // @ts-ignore
-  private readonly apiKey: string | undefined
+  private readonly accessKey: string | undefined
   private readonly gqlHttpUrl: string
   private readonly gqlWsUrl: string
   private readonly gql: GQLClient
@@ -49,8 +41,8 @@ export class DGMarketAPI {
    * @param config MarketAPIConfig for setting up the API, including an optional API key, network name, and base URL
    * @param logger Optional function for logging debug strings before and after requests are made
    */
-  constructor(config: DGMarketAPIConfig, logger?: (arg: string) => void) {
-    this.apiKey = config.apiKey
+  constructor(config: OpenMarketAPIConfig, logger?: (arg: string) => void) {
+    this.accessKey = config.accessKey
 
     switch (config.networkName) {
       case Network.Rinkeby:
@@ -68,13 +60,16 @@ export class DGMarketAPI {
     this.logger = logger || ((arg: string) => arg)
 
     if (!config.gqlHttpUrl) {
-      throw new Error("gqlHttpUrl required")
+      throw new Error('gqlHttpUrl required')
     }
 
     this.gqlHttpUrl = config.gqlHttpUrl
     this.gqlWsUrl = config.gqlWsUrl || ''
 
-    this.gql = new GQLClient(this.gqlHttpUrl, this.gqlWsUrl, logger)
+    this.gql = new GQLClient(
+      { httpEndpoint: this.gqlHttpUrl, wsEndpoint: this.gqlWsUrl, accessKey: this.accessKey },
+      logger
+    )
   }
 
   public version(): string {
@@ -96,7 +91,7 @@ export class DGMarketAPI {
     try {
       const { data } = await this.gql.query({
         fetchPolicy: this.fetchPolicy,
-        query: qNftAll
+        query: qNftAll,
       })
       return data.nfts || []
     } catch (e) {
@@ -131,7 +126,7 @@ export class DGMarketAPI {
     }
   }
 
-  public async getNfts(params?: DGMarketQueryNFTParams): Promise<any> {
+  public async getNfts(params?: OpenMarketQueryNFTParams): Promise<any> {
     try {
       const { data } = await this.gql.query({
         fetchPolicy: this.fetchPolicy,
@@ -150,7 +145,7 @@ export class DGMarketAPI {
     }
   }
 
-  public async getNftOffers(params?: DGMarketQueryNFTOfferParams): Promise<any> {
+  public async getNftOffers(params?: OpenMarketQueryNFTOfferParams): Promise<any> {
     try {
       const { data } = await this.gql.query({
         fetchPolicy: this.fetchPolicy,
@@ -169,7 +164,7 @@ export class DGMarketAPI {
     }
   }
 
-  public async getNftBids(params?: DGMarketQueryNFTBidParams): Promise<any> {
+  public async getNftBids(params?: OpenMarketQueryNFTBidParams): Promise<any> {
     try {
       const { data } = await this.gql.query({
         fetchPolicy: this.fetchPolicy,
@@ -188,7 +183,7 @@ export class DGMarketAPI {
     }
   }
 
-  public async getTxMsgs(params?: DGMarketQueryTxMsgParams): Promise<any> {
+  public async getTxMsgs(params?: OpenMarketQueryTxMsgParams): Promise<any> {
     try {
       const { data } = await this.gql.query({
         fetchPolicy: this.fetchPolicy,
@@ -207,7 +202,7 @@ export class DGMarketAPI {
     }
   }
 
-  public async getUser(params?: DGMarketQueryUserParams): Promise<any> {
+  public async getUser(params?: OpenMarketQueryUserParams): Promise<any> {
     try {
       const { data } = await this.gql.query({
         fetchPolicy: this.fetchPolicy,
@@ -230,7 +225,7 @@ export class DGMarketAPI {
     // todo remove
     // tslint:disable-next-line:no-console
     console.error(error)
-    const msg = `DGMarket API Error: ${error.message}`
+    const msg = `OpenMarket API Error: ${error.message}`
     this.logger(msg)
     throw new Error(msg)
   }

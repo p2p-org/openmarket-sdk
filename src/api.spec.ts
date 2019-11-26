@@ -1,12 +1,12 @@
 // tslint:disable:no-expression-statement
 import test from 'ava'
 // import WebSocket from 'ws'
-// import { DGMarketAPI } from './api'
+// import { OpenMarketAPI } from './api'
 
 // global.WebSocket = WebSocket
 
-test(`DGMarketAPI`, async (t) => {
-  // const api = new DGMarketAPI({})
+test(`OpenMarketAPI`, async (t) => {
+  // const api = new OpenMarketAPI({})
   //
   // t.is(api.version(), 'v1')
   // t.is(await api.getOneNft('123123'), null)

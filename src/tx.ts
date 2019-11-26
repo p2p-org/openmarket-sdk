@@ -1,15 +1,15 @@
-import bech32 from "bech32"
-import { fromSeed } from "bip32"
-import { generateMnemonic, mnemonicToSeed } from "bip39"
+import bech32 from 'bech32'
+import { fromSeed } from 'bip32'
+import { generateMnemonic, mnemonicToSeed } from 'bip39'
 import { ECPair } from 'bitcoinjs-lib'
-import crypto from "crypto"
-import fetch from "node-fetch"
-import secp256k1 from "secp256k1"
-import {DGTxConfig, TxMessageParams} from "./types"
+import crypto from 'crypto'
+import fetch from 'node-fetch'
+import secp256k1 from 'secp256k1'
+import { OpenMarketTxConfig, OpenMarketTxMessageParams } from './types'
 
-const MPCHAIN = "mpchain"
+const MPCHAIN = 'mpchain'
 
-export class DGTxAPI {
+export class OpenMarketTxAPI {
   public readonly lcdUrl: string
   public readonly chainId: string
   public readonly path: string
@@ -19,23 +19,22 @@ export class DGTxAPI {
   public readonly logger: (arg: string) => void
 
   /**
-   * Create a new instance of DGMarket.
+   * Create a new instance of OpenMarket.
    * @param config
    * @param logger logger, optional, a function that will be called with debugging
    *  information
    */
-  constructor(config: DGTxConfig, logger?: (arg: string) => void) {
-
+  constructor(config: OpenMarketTxConfig, logger?: (arg: string) => void) {
     this.lcdUrl = config.lcdUrl
     this.chainId = config.chainId
     this.path = config.path || "m/44'/118'/0'/0/0"
-    this.bech32MainPrefix = config.bech32MainPrefix || "cosmos"
+    this.bech32MainPrefix = config.bech32MainPrefix || 'cosmos'
 
     if (!this.lcdUrl) {
-      throw new Error("lcdUrl object was not set or invalid")
+      throw new Error('lcdUrl object was not set or invalid')
     }
     if (!this.chainId) {
-      throw new Error("chainId object was not set or invalid")
+      throw new Error('chainId object was not set or invalid')
     }
 
     // Debugging: default to nothing
@@ -56,20 +55,19 @@ export class DGTxAPI {
   }
 
   public getAccounts(address: string): Promise<any> {
-    const accountsApi = "/auth/accounts/"
-    return fetch(this.lcdUrl + accountsApi + address)
-      .then(response => response.json())
+    const accountsApi = '/auth/accounts/'
+    return fetch(this.lcdUrl + accountsApi + address).then((response) => response.json())
   }
 
-  public getECPairPriv(mnemonic: string): Buffer|undefined {
-    const seed = mnemonicToSeed(mnemonic);
-    const node = fromSeed(seed);
-    const child = node.derivePath(this.path);
+  public getECPairPriv(mnemonic: string): Buffer | undefined {
+    const seed = mnemonicToSeed(mnemonic)
+    const node = fromSeed(seed)
+    const child = node.derivePath(this.path)
     if (!child.privateKey) {
       throw new Error('private key error')
     }
-    const ecpair = ECPair.fromPrivateKey(child.privateKey, {compressed : false})
-    return ecpair.privateKey;
+    const ecpair = ECPair.fromPrivateKey(child.privateKey, { compressed: false })
+    return ecpair.privateKey
   }
 
   // public getECPairPrivFromPK(privateKey: Buffer): Buffer|undefined {
@@ -78,20 +76,19 @@ export class DGTxAPI {
   // }
 
   public broadcast(signedTx: object): Promise<any> {
-    const broadcastApi = this.chainId.indexOf(MPCHAIN) !== -1 ? "/marketplace/txs" : "/txs";
+    const broadcastApi = this.chainId.indexOf(MPCHAIN) !== -1 ? '/marketplace/txs' : '/txs'
 
     return fetch(this.lcdUrl + broadcastApi, {
       body: JSON.stringify(signedTx),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       method: 'POST',
-    })
-      .then((response) => response.json())
-      // .then(tx => this.txCheck(tx))
+    }).then((response) => response.json())
+    // .then(tx => this.txCheck(tx))
   }
 
-  public txCheck(tx: any): Promise<any>  {
+  public txCheck(tx: any): Promise<any> {
     return new Promise((resolve, reject) => {
       let log: any = null
       if (tx && tx.result && tx.result.logs && tx.result.logs.length) {
@@ -104,66 +101,65 @@ export class DGTxAPI {
     })
   }
 
-  public sign(signMessage: TxMessageParams, ecpairPriv: Buffer, modeType = "sync"): object {
+  public sign(signMessage: OpenMarketTxMessageParams, ecpairPriv: Buffer, modeType = 'sync'): object {
     // The supported return types includes "block"(return after tx commit), "sync"(return afer CheckTx) and "async"(return right away).
-    const hash = crypto.createHash('sha256').update(JSON.stringify(sortObject(signMessage))).digest('hex');
-    const buf = Buffer.from(hash, 'hex');
-    const signObj = secp256k1.sign(buf, ecpairPriv);
+    const hash = crypto
+      .createHash('sha256')
+      .update(JSON.stringify(sortObject(signMessage)))
+      .digest('hex')
+    const buf = Buffer.from(hash, 'hex')
+    const signObj = secp256k1.sign(buf, ecpairPriv)
     // const signatureBase64 = Buffer.from(signObj.signature, 'binary').toString('base64');
-    const signatureBase64 = signObj.signature.toString('base64');
+    const signatureBase64 = signObj.signature.toString('base64')
     let signedTx = {}
     if (this.chainId.indexOf(MPCHAIN) !== -1) {
       // stdSignMsg.bytes = convertStringToBytes(JSON.stringify(sortObject(signMessage)));
       signedTx = {
         // "mode": modeType,
-        "type": "cosmos-sdk/StdTx",
-        "value": {
-          "fee": signMessage.fee,
-          "memo": signMessage.memo,
-          "msg": signMessage.msgs,
-          "signatures": [
+        type: 'cosmos-sdk/StdTx',
+        value: {
+          fee: signMessage.fee,
+          memo: signMessage.memo,
+          msg: signMessage.msgs,
+          signatures: [
             {
-              "pub_key": {
-                "type": "tendermint/PubKeySecp256k1",
-                "value": getPubKeyBase64(ecpairPriv)
+              pub_key: {
+                type: 'tendermint/PubKeySecp256k1',
+                value: getPubKeyBase64(ecpairPriv),
               },
-              "signature": signatureBase64
-            }
+              signature: signatureBase64,
+            },
           ],
-          "type": signMessage.type
-        }
+          type: signMessage.type,
+        },
       }
-    } else  {
+    } else {
       signedTx = {
-        "mode": modeType,
-        "tx": {
-          "fee": signMessage.fee,
-          "memo": signMessage.memo,
-          "msg": signMessage.msgs,
-          "signatures": [
+        mode: modeType,
+        tx: {
+          fee: signMessage.fee,
+          memo: signMessage.memo,
+          msg: signMessage.msgs,
+          signatures: [
             {
-              "pub_key": {
-                "type": "tendermint/PubKeySecp256k1",
-                "value": getPubKeyBase64(ecpairPriv)
+              pub_key: {
+                type: 'tendermint/PubKeySecp256k1',
+                value: getPubKeyBase64(ecpairPriv),
               },
-              "signature": signatureBase64
-            }
-          ]
-        }
+              signature: signatureBase64,
+            },
+          ],
+        },
       }
     }
 
-    return signedTx;
+    return signedTx
   }
-
 }
 
-
-
-
 // just for compatibility
-// export function network(lcdUrl: string, chainId: string): DGTxAPI {
-//   return new DGTxAPI({ lcdUrl, chainId });
+// export function network(lcdUrl: string, chainId: string): OpenMarketTxAPI {
+//   return new OpenMarketTxAPI({ lcdUrl, chainId });
 // }
 
 // function convertStringToBytes(str: string): readonly any[] {
@@ -183,19 +179,24 @@ function getPubKeyBase64(ecpairPriv: Buffer): string {
 }
 
 function sortObject(obj: any): any {
-  if (obj === null) { return null }
-  if (typeof obj !== "object") { return obj }
-  if (Array.isArray(obj)) { return obj.map(sortObject) }
+  if (obj === null) {
+    return null
+  }
+  if (typeof obj !== 'object') {
+    return obj
+  }
+  if (Array.isArray(obj)) {
+    return obj.map(sortObject)
+  }
   const sortedKeys = Object.keys(obj).sort()
   const result = {}
-  sortedKeys.forEach(key => {
+  sortedKeys.forEach((key) => {
     // @ts-ignore
     // tslint:disable-next-line: no-object-mutation
     result[key] = sortObject(obj[key])
   })
   return result
 }
-
 
 // module.exports = {
 // 	network: network,
