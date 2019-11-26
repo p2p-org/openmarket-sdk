@@ -1,19 +1,19 @@
 // export * from './lib/async';
 // export * from './lib/hash';
 // export * from './lib/number';
-import { DGMarketAPI } from './api'
-import { DGMarket } from './market'
-import * as DGTxMsgs from './msgs'
-import { DGTxAPI } from './tx'
+import { OpenMarketAPI } from './api'
+import { OpenMarket } from './market'
+import * as OpenMarketTxMsgs from './msgs'
+import { OpenMarketTxAPI } from './tx'
 import { Network } from './types'
 
 export {
   // Main SDK export:
-  DGMarket,
+  OpenMarket,
   // So the API could be used separately:
-  DGMarketAPI,
+  OpenMarketAPI,
   // Types to help initialize SDK and listen to events.
   Network,
-  DGTxAPI,
-  DGTxMsgs
+  OpenMarketTxAPI,
+  OpenMarketTxMsgs,
 }

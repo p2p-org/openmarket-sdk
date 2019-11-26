@@ -1,31 +1,31 @@
-import { DGMarketAPI } from './api'
-import { DGMarketAPIConfig, DGProvider } from './types'
+import { OpenMarketAPI } from './api'
+import { OpenMarketAPIConfig, OpenMarketProvider } from './types'
 
-export class DGMarket {
+export class OpenMarket {
   // provider instance to use
-  public readonly provider: DGProvider
+  public readonly provider: OpenMarketProvider
 
   // Logger function to use when debugging
   public readonly logger: (arg: string) => void
   // API instance on this seaport
-  public readonly api: DGMarketAPI
+  public readonly api: OpenMarketAPI
 
   // private readonly networkName: Network;
   // private _emitter: EventEmitter
 
   /**
-   * Create a new instance of DGMarket.
+   * Create a new instance of OpenMarket.
    * @param provider Some Provider to use for transactions.
    * @param apiConfig configuration options, including `networkName`
    * @param logger logger, optional, a function that will be called with debugging
    *  information
    */
-  constructor(provider: DGProvider, apiConfig: DGMarketAPIConfig, logger?: (arg: string) => void) {
+  constructor(provider: OpenMarketProvider, apiConfig: OpenMarketAPIConfig, logger?: (arg: string) => void) {
     // API config
-    this.api = new DGMarketAPI(apiConfig)
+    this.api = new OpenMarketAPI(apiConfig)
 
     // provider Config
-    // this.provider = new DGProvider
+    // this.provider = new OpenMarketProvider
     this.provider = provider
     // this.networkName = apiConfig.networkName || Network.Main;
 

@@ -1,4 +1,4 @@
-import {FetchPolicy} from "apollo-client";
+import { FetchPolicy } from 'apollo-client'
 
 export enum Network {
   Main = 'main',
@@ -22,39 +22,40 @@ export enum SortOrder {
  * @param networkName `Network` type to use. Defaults to `Network.Main` (mainnet)
  * @param apiBaseUrl Optional base URL to use for the API
  */
-export interface DGMarketAPIConfig {
+export interface OpenMarketAPIConfig {
   readonly networkName?: Network
-  readonly apiKey?: string
+  readonly accessKey?: string
   readonly apiBaseUrl?: string
   readonly gqlHttpUrl: string
   readonly gqlWsUrl?: string
   readonly fetchPolicy?: FetchPolicy
 }
 
-export interface DGTxConfig {
+export interface OpenMarketTxConfig {
   readonly lcdUrl: string
   readonly chainId: string
   readonly path?: string
   readonly bech32MainPrefix?: string
 }
 
-export interface TxMessageParams {
+export interface OpenMarketTxMessageParams {
   // readonly type: string
   // readonly msg: string
   // readonly fee: string
   readonly [key: string]: any
 }
 
-export interface DGMarketGQLConfig {
-  readonly httpEndpoint?: string
+export interface OpenMarketGQLConfig {
+  readonly httpEndpoint: string
   readonly wsEndpoint?: string
+  readonly accessKey?: string
 }
 
-export interface DGProvider {
+export interface OpenMarketProvider {
   readonly networkName?: Network
 }
 
-export interface DGMarketQueryNFTParams {
+export interface OpenMarketQueryNFTParams {
   // $token_id: String, $status: Int, $offset: Int, $limit: Int, $owner: String, $ordPrice: order_by = asc, $ordStatus: order_by = asc, $minPrice: String, $maxPrice: String
   readonly tokenId?: string
   readonly status?: MarketStatus
@@ -67,7 +68,7 @@ export interface DGMarketQueryNFTParams {
   readonly maxPrice?: string
 }
 
-export interface DGMarketQueryNFTOfferParams {
+export interface OpenMarketQueryNFTOfferParams {
   readonly tokenId?: string
   readonly owner?: string
   readonly buyer?: string
@@ -78,7 +79,7 @@ export interface DGMarketQueryNFTOfferParams {
   readonly maxPrice?: string
 }
 
-export interface DGMarketQueryNFTBidParams {
+export interface OpenMarketQueryNFTBidParams {
   readonly tokenId?: string
   readonly owner?: string
   readonly bidder?: string
@@ -89,10 +90,10 @@ export interface DGMarketQueryNFTBidParams {
   readonly maxPrice?: string
 }
 
-export interface DGMarketQueryUserParams {
+export interface OpenMarketQueryUserParams {
   readonly address?: string
 }
 
-export interface DGMarketQueryTxMsgParams {
+export interface OpenMarketQueryTxMsgParams {
   readonly hash?: string
 }
