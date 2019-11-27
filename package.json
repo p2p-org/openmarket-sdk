@@ -1,6 +1,6 @@
 {
   "name": "dgaming-market-sdk",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "DGaming Market API SDK",
   "main": "build/main/index.js",
   "types": "dist/main/index.d.ts",
