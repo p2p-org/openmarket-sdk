@@ -179,8 +179,8 @@ export const qNfts = gql`
 // }
 
 export const qTxMsgs = gql`
-  query TxMsg($hash: String, $search: String) {
-    messages(where: { tx: { hash: { _eq: $hash } }, signature: { _ilike: $search } }) {
+  query TxMsg($hash: String, $msg: jsonb, $log: jsonb) {
+    messages(where: { tx: { hash: { _eq: $hash }, log: {_contains: $log} }, signature: { _contains: $msg } }) {
       msg_type
       signature
       tx {

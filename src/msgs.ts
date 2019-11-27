@@ -397,14 +397,14 @@ export function NewMsgPutNFTOnAuction(input: OpenMarketTxMessageParams): object 
           beneficiary: input.beneficiary,
           buyout_price: [
             {
-              amount: String(input.price.amount),
-              denom: input.buyout_price.denom,
+              amount: String(input.buyout.amount),
+              denom: input.price.denom,
             },
           ],
           opening_price: [
             {
               amount: String(input.price.amount),
-              denom: input.opening_price.denom,
+              denom: input.price.denom,
             },
           ],
           owner: input.owner,
