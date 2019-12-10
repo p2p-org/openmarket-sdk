@@ -2,7 +2,7 @@
 import { FetchPolicy } from 'apollo-client'
 import { IS_DEV } from './environment'
 import { GQLClient } from './gqlclient'
-import { qNftAll, qNftBids, qNftById, qNftOffers, qNfts, qTxMsgs, qUser } from './gqlqueries'
+import { qNftAll, qNftBids, qNftById, qNftOffers, qNfts, qTokens, qTxMsgs, qUser } from './gqlqueries'
 import {
   Network,
   OpenMarketAPIConfig,
@@ -212,6 +212,22 @@ export class OpenMarketAPI {
       // tslint:disable-next-line:no-console
       // console.log(data)
       return data.users || []
+    } catch (e) {
+      if (e instanceof Error) {
+        this._handleError(e)
+      } else {
+        throw e
+      }
+    }
+  }
+
+  public async getTokens(): Promise<any> {
+    try {
+      const { data } = await this.gql.query({
+        fetchPolicy: this.fetchPolicy,
+        query: qTokens,
+      })
+      return data.fungible_tokens || []
     } catch (e) {
       if (e instanceof Error) {
         this._handleError(e)

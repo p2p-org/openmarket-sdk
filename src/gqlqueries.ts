@@ -55,8 +55,13 @@ export const qUser = gql`
 // export const gameQuery = info => gql`query ($id: ID!) { game(id: $id) { ${info} } }`
 
 export const qNftOffers = gql`
-  query($tokenId: String, $offset: Int, $limit: Int, $owner: String, $buyer: String) #        $ordPrice: order_by = asc,
-  #        $minPrice: String,
+  query(
+    $tokenId: String
+    $offset: Int
+    $limit: Int
+    $owner: String
+    $buyer: String #        $ordPrice: order_by = asc,
+  ) #        $minPrice: String,
   #        $maxPrice: String
   {
     offers(
@@ -68,9 +73,8 @@ export const qNftOffers = gql`
         deleted_at: { _is_null: true }
       }
       offset: $offset
-      limit: $limit
-    ) #            order_by: {price: $ordPrice}
-    {
+      limit: $limit #            order_by: {price: $ordPrice}
+    ) {
       price
       offer_id
       buyer
@@ -88,8 +92,13 @@ export const qNftOffers = gql`
 `
 
 export const qNftBids = gql`
-  query($tokenId: String, $offset: Int, $limit: Int, $owner: String, $bidder: String) #        $ordPrice: order_by = asc
-  #        $minPrice: String
+  query(
+    $tokenId: String
+    $offset: Int
+    $limit: Int
+    $owner: String
+    $bidder: String #        $ordPrice: order_by = asc
+  ) #        $minPrice: String
   #        $maxPrice: String
   {
     auction_bids(
@@ -98,9 +107,8 @@ export const qNftBids = gql`
         bidder_address: { _ilike: $bidder }
         nft: { owner_address: { _ilike: $owner } }
         deleted_at: { _is_null: true }
-      }
-    ) #            price: { _gte: $minPrice, _lte: $maxPrice }
-    {
+      } #            price: { _gte: $minPrice, _lte: $maxPrice }
+    ) {
       bidder_address
       price
       created_at
@@ -117,8 +125,13 @@ export const qNftBids = gql`
 `
 
 export const qNfts = gql`
-  query Nft($tokenId: String, $status: Int, $offset: Int, $limit: Int, $owner: String) #    $ordPrice: order_by = asc
-  #    $ordStatus: order_by = asc
+  query Nft(
+    $tokenId: String
+    $status: Int
+    $offset: Int
+    $limit: Int
+    $owner: String #    $ordPrice: order_by = asc
+  ) #    $ordStatus: order_by = asc
   #    $minPrice: String
   #    $maxPrice: String
   {
@@ -139,9 +152,6 @@ export const qNfts = gql`
         #                price: $ordPrice
       }
     ) {
-      id
-      token_id
-      price
       owner: user {
         address
         items_on_sale: nfts_aggregate(where: { status: { _neq: 0 } }) {
@@ -155,32 +165,34 @@ export const qNfts = gql`
           }
         }
       }
-      buyout_price
+      token_id
+      price
       status
       created_at
       updated_at
-      time_to_sell
       opening_price
+      buyout_price
+      time_to_sell
+      bids: auction_bids(where: { deleted_at: { _is_null: true } }) {
+        bidder_address
+        price
+        created_at
+        updated_at
+      }
+      offers(where: { deleted_at: { _is_null: true } }) {
+        price
+        offer_id
+        buyer
+        created_at
+        updated_at
+      }
     }
   }
 `
 
-// auction_bids {
-//   id
-//   price
-//   created_at
-//   bidder_address
-// }
-// offers(where: {deleted_at: {_is_null: true}}) {
-//   id
-//   price
-//   buyer
-//   offer_id
-// }
-
 export const qTxMsgs = gql`
   query TxMsg($hash: String, $msg: jsonb, $log: jsonb) {
-    messages(where: { tx: { hash: { _eq: $hash }, log: {_contains: $log} }, signature: { _contains: $msg } }) {
+    messages(where: { tx: { hash: { _eq: $hash }, log: { _contains: $log } }, signature: { _contains: $msg } }) {
       msg_type
       signature
       tx {
@@ -192,6 +204,14 @@ export const qTxMsgs = gql`
       signers
       failed
       error
+    }
+  }
+`
+
+export const qTokens = gql`
+  query {
+    fungible_tokens(where: { deleted_at: { _is_null: true } }) {
+      denom
     }
   }
 `
