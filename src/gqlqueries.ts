@@ -127,18 +127,21 @@ export const qNftBids = gql`
 export const qNfts = gql`
   query Nft(
     $tokenId: String
+    $tokenIds: [String!]
     $status: Int
     $offset: Int
     $limit: Int
-    $owner: String #    $ordPrice: order_by = asc
-  ) #    $ordStatus: order_by = asc
-  #    $minPrice: String
-  #    $maxPrice: String
+    $owner: String
+#    $ordPrice: order_by = asc
+#    $ordStatus: order_by = asc
+#    $minPrice: String
+#    $maxPrice: String
+  )
   {
     nfts(
       where: {
         status: { _eq: $status }
-        token_id: { _ilike: $tokenId }
+        token_id: { _ilike: $tokenId, _in: $tokenIds }
         owner_address: { _ilike: $owner }
         #        price: { _gte: $minPrice, _lte: $maxPrice }
         deleted_at: { _is_null: true }
