@@ -5,6 +5,7 @@ import { ECPair } from 'bitcoinjs-lib'
 import crypto from 'crypto'
 import fetch from 'node-fetch'
 import secp256k1 from 'secp256k1'
+import { _handleError } from './lib/helprers'
 import { OpenMarketTxConfig, OpenMarketTxMessageParams } from './types'
 
 const MPCHAIN = 'mpchain'
@@ -56,7 +57,9 @@ export class OpenMarketTxAPI {
 
   public getAccounts(address: string): Promise<any> {
     const accountsApi = '/auth/accounts/'
-    return fetch(this.lcdUrl + accountsApi + address).then((response) => response.json())
+    return fetch(this.lcdUrl + accountsApi + address)
+      .then((response) => response.json())
+      .catch(_handleError)
   }
 
   public getECPairPriv(mnemonic: string): Buffer | undefined {
@@ -84,7 +87,9 @@ export class OpenMarketTxAPI {
         'Content-Type': 'application/json',
       },
       method: 'POST',
-    }).then((response) => response.json())
+    })
+      .then((response) => response.json())
+      .catch(_handleError)
     // .then(tx => this.txCheck(tx))
   }
 

@@ -1,8 +1,9 @@
 // import axios from 'axios'
 import { FetchPolicy } from 'apollo-client'
-import { IS_DEV } from './environment'
-import { GQLClient } from './gqlclient'
-import { qNftAll, qNftBids, qNftById, qNftOffers, qNfts, qTokens, qTxMsgs, qUser } from './gqlqueries'
+import { GQLClient } from './lib/gqlclient'
+import { IS_DEV } from './lib/environment'
+import { qNftAll, qNftBids, qNftById, qNftOffers, qNfts, qTokens, qTxMsgs, qUser } from './lib/gqlqueries'
+import { _handleError } from './lib/helprers'
 import {
   Network,
   OpenMarketAPIConfig,
@@ -95,14 +96,7 @@ export class OpenMarketAPI {
       })
       return data.nfts || []
     } catch (e) {
-      if (e instanceof Error) {
-        // be sure to re-throw it if you can't properly resolve it
-        this._handleError(e)
-      } else {
-        // probably dealing with a naked string or number here
-        // handle if you can, otherwise re-throw.
-        throw e
-      }
+      _handleError(e, this.logger)
     }
   }
 
@@ -118,11 +112,7 @@ export class OpenMarketAPI {
       const result = data.nfts.length ? data.nfts.pop() : null
       return result
     } catch (e) {
-      if (e instanceof Error) {
-        this._handleError(e)
-      } else {
-        throw e
-      }
+      _handleError(e, this.logger)
     }
   }
 
@@ -137,11 +127,7 @@ export class OpenMarketAPI {
       // console.log(data)
       return data.nfts || []
     } catch (e) {
-      if (e instanceof Error) {
-        this._handleError(e)
-      } else {
-        throw e
-      }
+      _handleError(e, this.logger)
     }
   }
 
@@ -156,11 +142,7 @@ export class OpenMarketAPI {
       // console.log(data)
       return data.offers || []
     } catch (e) {
-      if (e instanceof Error) {
-        this._handleError(e)
-      } else {
-        throw e
-      }
+      _handleError(e, this.logger)
     }
   }
 
@@ -175,11 +157,7 @@ export class OpenMarketAPI {
       // console.log(data)
       return data.auction_bids || []
     } catch (e) {
-      if (e instanceof Error) {
-        this._handleError(e)
-      } else {
-        throw e
-      }
+      _handleError(e, this.logger)
     }
   }
 
@@ -194,11 +172,7 @@ export class OpenMarketAPI {
       // console.log(data)
       return data.messages && data.messages.length ? data.messages[0] : null
     } catch (e) {
-      if (e instanceof Error) {
-        this._handleError(e)
-      } else {
-        throw e
-      }
+      _handleError(e, this.logger)
     }
   }
 
@@ -213,11 +187,7 @@ export class OpenMarketAPI {
       // console.log(data)
       return data.users || []
     } catch (e) {
-      if (e instanceof Error) {
-        this._handleError(e)
-      } else {
-        throw e
-      }
+      _handleError(e, this.logger)
     }
   }
 
@@ -229,20 +199,7 @@ export class OpenMarketAPI {
       })
       return data.fungible_tokens || []
     } catch (e) {
-      if (e instanceof Error) {
-        this._handleError(e)
-      } else {
-        throw e
-      }
+        _handleError(e, this.logger)
     }
-  }
-
-  private _handleError(error: Error): void {
-    // todo remove
-    // tslint:disable-next-line:no-console
-    console.error(error)
-    const msg = `OpenMarket API Error: ${error.message}`
-    this.logger(msg)
-    throw new Error(msg)
   }
 }

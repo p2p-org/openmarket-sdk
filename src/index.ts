@@ -1,6 +1,3 @@
-// export * from './lib/async';
-// export * from './lib/hash';
-// export * from './lib/number';
 import { OpenMarketAPI } from './api'
 import { OpenMarket } from './market'
 import * as OpenMarketTxMsgs from './msgs'

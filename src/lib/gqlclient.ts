@@ -17,7 +17,7 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 import 'isomorphic-unfetch'
 import ws from 'ws'
-import { OpenMarketGQLConfig } from './types'
+import { OpenMarketGQLConfig } from '../types'
 
 // tslint:disable-next-line:variable-name
 const _global = typeof global !== 'undefined' ? global : typeof window !== 'undefined' ? window : {}
