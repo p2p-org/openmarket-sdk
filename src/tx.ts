@@ -62,6 +62,13 @@ export class OpenMarketTxAPI {
       .catch(_handleError)
   }
 
+  public getBalances(address: string): Promise<any> {
+    const accountsApi = '/bank/balances/'
+    return fetch(this.lcdUrl + accountsApi + address)
+      .then((response) => response.json())
+      .catch(_handleError)
+  }
+
   public getECPairPriv(mnemonic: string): Buffer | undefined {
     const seed = mnemonicToSeed(mnemonic)
     const node = fromSeed(seed)
