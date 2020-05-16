@@ -515,6 +515,59 @@ export function NewMsgBuyoutOnAuction(input: OpenMarketTxMessageParams): object 
   }
 }
 
+export function NewMsgIBCTransferFungibleTokens(input: OpenMarketTxMessageParams): object {
+  return {
+    type: 'cosmos-sdk/StdTx',
+    value: {
+      msg: [
+        {
+          sender: input.sender, 
+          receiver: input.receiver, 
+          amount: [
+            {
+              denom: input.price.denom, 
+              amount: String(input.price.amount)
+            }
+          ],
+          source_port: "transfer",
+          dest_height : String(input.destHeight), 
+          source_channel: input.sourceChannel
+        }
+      ],
+      fee: {
+        amount: [],
+        gas: String(input.gas),
+      },
+      memo: input.memo,
+    },
+  }
+}
+
+export function NewMsgIBCTransferNFT(input: OpenMarketTxMessageParams): object {
+  return {
+    type: 'cosmos-sdk/StdTx',
+    value: {
+      msg: [{
+        type: input.type,
+        value: {
+          source_port: 'transfernft',
+          source_channel: input.sourceChannel,
+          destination_height: String(input.destHeight),
+          id: input.id,
+          denom: input.denom,
+          sender: input.sender,
+          receiver: input.receiver,
+        },
+      }],
+      fee: {
+        amount: [],
+        gas: String(input.gas),
+      },
+      memo: input.memo,
+    },
+  }
+}
+
 /*
 ******************************************************
 Exports
