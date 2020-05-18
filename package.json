@@ -1,6 +1,6 @@
 {
   "name": "openmarket-sdk",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Open Market API SDK",
   "main": "build/main/index.js",
   "types": "dist/main/index.d.ts",
