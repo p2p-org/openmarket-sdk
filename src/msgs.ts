@@ -536,7 +536,7 @@ export function NewMsgIBCTransferFungibleTokens(input: OpenMarketTxMessageParams
               denom: input.denom,
             },
           ],
-          dest_height: String(input.destHeight),
+          destination_height: String(input.destHeight),
           receiver: input.receiver,
           sender: input.sender,
           source_channel: input.sourceChannel,
