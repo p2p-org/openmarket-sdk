@@ -6,9 +6,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-### [1.0.0](https://github.com/corestario/openmarket-sdk/compare/v0.0.17...v1.0.0) (2020-05-14)
-
-
 ### [0.0.17](https://github.com/corestario/openmarket-sdk/compare/v0.0.16...v0.0.17) (2020-01-08)
 
 
