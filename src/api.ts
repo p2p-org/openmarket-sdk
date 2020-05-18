@@ -1,7 +1,7 @@
 // import axios from 'axios'
 import { FetchPolicy } from 'apollo-client'
-import { GQLClient } from './lib/gqlclient'
 import { IS_DEV } from './lib/environment'
+import { GQLClient } from './lib/gqlclient'
 import { qNftAll, qNftBids, qNftById, qNftOffers, qNfts, qTokens, qTxMsgs, qUser } from './lib/gqlqueries'
 import { _handleError } from './lib/helprers'
 import {
