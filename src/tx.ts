@@ -1,20 +1,24 @@
-import bech32 from 'bech32'
-import { fromSeed } from 'bip32'
-import { generateMnemonic, mnemonicToSeed } from 'bip39'
-import { ECPair } from 'bitcoinjs-lib'
-import crypto from 'crypto'
-import fetch from 'node-fetch'
-import secp256k1 from 'secp256k1'
-import { _handleError } from './lib/helprers'
-import { OpenMarketTxConfig, OpenMarketTxMessageParams } from './types'
+import { marshalPubKey } from '@tendermint/amino-js'
+import { bytesToBase64 } from '@tendermint/belt'
+import {
+  BroadcastMode,
+  createAddress,
+  createBroadcastTx,
+  createWalletFromMnemonic,
+  SignMeta,
+  signTx,
+  StdTx,
+  Tx,
+  Wallet,
+} from '@tendermint/sig'
 
-const MPCHAIN = 'mpchain'
+import { generateMnemonic } from 'bip39'
+import { _handleError } from './lib/helprers'
+import { OpenMarketTxConfig } from './types'
 
 export class OpenMarketTxAPI {
   public readonly lcdUrl: string
   public readonly chainId: string
-  public readonly path: string
-  public readonly bech32MainPrefix: string
 
   // Logger function to use when debugging
   public readonly logger: (arg: string) => void
@@ -28,8 +32,6 @@ export class OpenMarketTxAPI {
   constructor(config: OpenMarketTxConfig, logger?: (arg: string) => void) {
     this.lcdUrl = config.lcdUrl
     this.chainId = config.chainId
-    this.path = config.path || "m/44'/118'/0'/0/0"
-    this.bech32MainPrefix = config.bech32MainPrefix || 'cosmos'
 
     if (!this.lcdUrl) {
       throw new Error('lcdUrl object was not set or invalid')
@@ -47,12 +49,20 @@ export class OpenMarketTxAPI {
     return generateMnemonic(strength)
   }
 
+  public getWallet(mnemonic: string): Wallet {
+    return createWalletFromMnemonic(mnemonic)
+  }
+
   public getAddress(mnemonic: string): string {
-    const seed = mnemonicToSeed(mnemonic)
-    const node = fromSeed(seed)
-    const child = node.derivePath(this.path)
-    const words = bech32.toWords(child.identifier)
-    return bech32.encode(this.bech32MainPrefix, words)
+    const wallet = createWalletFromMnemonic(mnemonic)
+    return createAddress(wallet.publicKey)
+  }
+
+  public getNodeInfo(address: string): Promise<any> {
+    const accountsApi = '/node_info'
+    return fetch(this.lcdUrl + accountsApi + address)
+      .then((response) => response.json())
+      .catch(_handleError)
   }
 
   public getAccounts(address: string): Promise<any> {
@@ -69,27 +79,18 @@ export class OpenMarketTxAPI {
       .catch(_handleError)
   }
 
-  public getECPairPriv(mnemonic: string): Buffer | undefined {
-    const seed = mnemonicToSeed(mnemonic)
-    const node = fromSeed(seed)
-    const child = node.derivePath(this.path)
-    if (!child.privateKey) {
-      throw new Error('private key error')
-    }
-    const ecpair = ECPair.fromPrivateKey(child.privateKey, { compressed: false })
-    return ecpair.privateKey
+  public getPrivateKey(mnemonic: string): Uint8Array | undefined {
+    const wallet = createWalletFromMnemonic(mnemonic)
+    return wallet.privateKey
   }
 
-  // public getECPairPrivFromPK(privateKey: Buffer): Buffer|undefined {
-  //   const ecpair = ECPair.fromPrivateKey(privateKey, {compressed : false})
-  //   return ecpair.privateKey;
-  // }
+  public broadcast(tx: StdTx, mode: BroadcastMode = 'sync'): Promise<any> {
+    const broadcastApi = '/txs'
 
-  public broadcast(signedTx: object): Promise<any> {
-    const broadcastApi = this.chainId.indexOf(MPCHAIN) !== -1 ? '/marketplace/txs' : '/txs'
+    // The supported return types includes "block"(return after tx commit), "sync"(return afer CheckTx) and "async"(return right away).
 
     return fetch(this.lcdUrl + broadcastApi, {
-      body: JSON.stringify(signedTx),
+      body: JSON.stringify(createBroadcastTx(tx, mode)),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -113,104 +114,14 @@ export class OpenMarketTxAPI {
     })
   }
 
-  public sign(signMessage: OpenMarketTxMessageParams, ecpairPriv: Buffer, modeType = 'sync'): object {
-    // The supported return types includes "block"(return after tx commit), "sync"(return afer CheckTx) and "async"(return right away).
-    const hash = crypto
-      .createHash('sha256')
-      .update(JSON.stringify(sortObject(signMessage)))
-      .digest('hex')
-    const buf = Buffer.from(hash, 'hex')
-    const signObj = secp256k1.sign(buf, ecpairPriv)
-    // const signatureBase64 = Buffer.from(signObj.signature, 'binary').toString('base64');
-    const signatureBase64 = signObj.signature.toString('base64')
-    let signedTx = {}
-    if (this.chainId.indexOf(MPCHAIN) !== -1) {
-      // stdSignMsg.bytes = convertStringToBytes(JSON.stringify(sortObject(signMessage)));
-      signedTx = {
-        // "mode": modeType,
-        type: 'cosmos-sdk/StdTx',
-        value: {
-          fee: signMessage.fee,
-          memo: signMessage.memo,
-          msg: signMessage.msgs,
-          signatures: [
-            {
-              pub_key: {
-                type: 'tendermint/PubKeySecp256k1',
-                value: getPubKeyBase64(ecpairPriv),
-              },
-              signature: signatureBase64,
-            },
-          ],
-          type: signMessage.type,
-        },
-      }
-    } else {
-      signedTx = {
-        mode: modeType,
-        tx: {
-          fee: signMessage.fee,
-          memo: signMessage.memo,
-          msg: signMessage.msgs,
-          signatures: [
-            {
-              pub_key: {
-                type: 'tendermint/PubKeySecp256k1',
-                value: getPubKeyBase64(ecpairPriv),
-              },
-              signature: signatureBase64,
-            },
-          ],
-        },
-      }
-    }
-
+  public sign(tx: Tx | StdTx, wallet: Wallet, meta: SignMeta): StdTx {
+    const signedTx = signTx(tx, meta, wallet)
+    // @ts-ignore
+    // tslint:disable-next-line: no-object-mutation
+    signedTx.signatures = signedTx.signatures.map(s => ({
+      pub_key: bytesToBase64(marshalPubKey(s.pub_key, false)),
+      signature: s.signature
+    }))
     return signedTx
   }
 }
-
-// just for compatibility
-// export function network(lcdUrl: string, chainId: string): OpenMarketTxAPI {
-//   return new OpenMarketTxAPI({ lcdUrl, chainId });
-// }
-
-// function convertStringToBytes(str: string): readonly any[] {
-//   // let myBuffer: string[]
-//   const buffer = Buffer.from(str, 'utf8');
-//   // for (let i = 0; i < buffer.length; i++) {
-//
-//   for (const b of buffer) {
-//
-//     myBuffer.push(b);
-//   }
-//   return myBuffer;
-// }
-//
-function getPubKeyBase64(ecpairPriv: Buffer): string {
-  return secp256k1.publicKeyCreate(ecpairPriv).toString('base64')
-}
-
-function sortObject(obj: any): any {
-  if (obj === null) {
-    return null
-  }
-  if (typeof obj !== 'object') {
-    return obj
-  }
-  if (Array.isArray(obj)) {
-    return obj.map(sortObject)
-  }
-  const sortedKeys = Object.keys(obj).sort()
-  const result = {}
-  sortedKeys.forEach((key) => {
-    // @ts-ignore
-    // tslint:disable-next-line: no-object-mutation
-    result[key] = sortObject(obj[key])
-  })
-  return result
-}
-
-// module.exports = {
-// 	network: network,
-// 	msgs: msgs,
-// }

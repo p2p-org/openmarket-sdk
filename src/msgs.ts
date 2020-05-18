@@ -4,18 +4,19 @@ Billy NFT
 ******************************************************
 */
 
+import { Tx } from '@tendermint/sig'
 import { OpenMarketTxMessageParams } from './types'
 
-export function NewMessageMintNFT(input: OpenMarketTxMessageParams): object {
+export function NewMessageMintNFT(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // // account_number: String(input.account_number),
+    // // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'cosmos-sdk/MsgMintNFT',
         value: {
@@ -28,20 +29,20 @@ export function NewMessageMintNFT(input: OpenMarketTxMessageParams): object {
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMessageBurnNFT(input: OpenMarketTxMessageParams): object {
+export function NewMessageBurnNFT(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // // account_number: String(input.account_number),
+    // // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'cosmos-sdk/MsgBurnNFT',
         value: {
@@ -51,20 +52,20 @@ export function NewMessageBurnNFT(input: OpenMarketTxMessageParams): object {
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMsgEditNFTMetadata(input: OpenMarketTxMessageParams): object {
+export function NewMsgEditNFTMetadata(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // account_number: String(input.account_number),
+    // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'cosmos-sdk/MsgEditNFTMetadata',
         value: {
@@ -76,20 +77,20 @@ export function NewMsgEditNFTMetadata(input: OpenMarketTxMessageParams): object 
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMsgTransferNFT(input: OpenMarketTxMessageParams): object {
+export function NewMsgTransferNFT(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // account_number: String(input.account_number),
+    // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'cosmos-sdk/MsgTransferNFT',
         value: {
@@ -101,7 +102,7 @@ export function NewMsgTransferNFT(input: OpenMarketTxMessageParams): object {
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
@@ -111,16 +112,16 @@ Update NFT Params
 ******************************************************
 */
 
-export function NewMsgUpdateNFTParams(input: OpenMarketTxMessageParams): object {
+export function NewMsgUpdateNFTParams(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // account_number: String(input.account_number),
+    // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/UpdateNFTParams',
         value: {
@@ -130,7 +131,7 @@ export function NewMsgUpdateNFTParams(input: OpenMarketTxMessageParams): object 
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
@@ -140,16 +141,16 @@ Market
 ******************************************************
 */
 
-export function NewMessagePutNFTOnMarket(input: OpenMarketTxMessageParams): object {
+export function NewMessagePutNFTOnMarket(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // account_number: String(input.account_number),
+    // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/PutNFTOnMarket',
         value: {
@@ -165,20 +166,20 @@ export function NewMessagePutNFTOnMarket(input: OpenMarketTxMessageParams): obje
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMsgBuyNFT(input: OpenMarketTxMessageParams): object {
+export function NewMsgBuyNFT(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // // account_number: String(input.account_number),
+    // // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/BuyNFT',
         value: {
@@ -189,20 +190,20 @@ export function NewMsgBuyNFT(input: OpenMarketTxMessageParams): object {
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMsgRemoveNFTFromMarket(input: OpenMarketTxMessageParams): object {
+export function NewMsgRemoveNFTFromMarket(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // // account_number: String(input.account_number),
+    // // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/RemoveNFTFromMarket',
         value: {
@@ -211,7 +212,7 @@ export function NewMsgRemoveNFTFromMarket(input: OpenMarketTxMessageParams): obj
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
@@ -221,16 +222,16 @@ Fungible Tokens
 ******************************************************
 */
 
-export function NewMsgCreateFungibleToken(input: OpenMarketTxMessageParams): object {
+export function NewMsgCreateFungibleToken(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // // account_number: String(input.account_number),
+    // // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/CreateFungibleToken',
         value: {
@@ -240,20 +241,20 @@ export function NewMsgCreateFungibleToken(input: OpenMarketTxMessageParams): obj
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMsgTransferFungibleTokens(input: OpenMarketTxMessageParams): object {
+export function NewMsgTransferFungibleTokens(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // // account_number: String(input.account_number),
+    // // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/TransferFungibleTokens',
         value: {
@@ -264,20 +265,20 @@ export function NewMsgTransferFungibleTokens(input: OpenMarketTxMessageParams): 
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMsgBurnFungibleTokens(input: OpenMarketTxMessageParams): object {
+export function NewMsgBurnFungibleTokens(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // // account_number: String(input.account_number),
+    // // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/BurnFungibleTokens',
         value: {
@@ -287,7 +288,7 @@ export function NewMsgBurnFungibleTokens(input: OpenMarketTxMessageParams): obje
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
@@ -297,16 +298,16 @@ Offers
 ******************************************************
 */
 
-export function NewMsgMakeOffer(input: OpenMarketTxMessageParams): object {
+export function NewMsgMakeOffer(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // // account_number: String(input.account_number),
+    // // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/MakeOffer',
         value: {
@@ -323,20 +324,20 @@ export function NewMsgMakeOffer(input: OpenMarketTxMessageParams): object {
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMsgAcceptOffer(input: OpenMarketTxMessageParams): object {
+export function NewMsgAcceptOffer(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // account_number: String(input.account_number),
+    // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/AcceptOffer',
         value: {
@@ -348,20 +349,20 @@ export function NewMsgAcceptOffer(input: OpenMarketTxMessageParams): object {
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMsgRemoveOffer(input: OpenMarketTxMessageParams): object {
+export function NewMsgRemoveOffer(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // account_number: String(input.account_number),
+    // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/RemoveOffer',
         value: {
@@ -371,7 +372,7 @@ export function NewMsgRemoveOffer(input: OpenMarketTxMessageParams): object {
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
@@ -381,16 +382,16 @@ Auction
 ******************************************************
 */
 
-export function NewMsgPutNFTOnAuction(input: OpenMarketTxMessageParams): object {
+export function NewMsgPutNFTOnAuction(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // account_number: String(input.account_number),
+    // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/MsgPutNFTOnAuction',
         value: {
@@ -413,20 +414,21 @@ export function NewMsgPutNFTOnAuction(input: OpenMarketTxMessageParams): object 
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMsgRemoveNFTFromAuction(input: OpenMarketTxMessageParams): object {
+
+export function NewMsgRemoveNFTFromAuction(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // account_number: String(input.account_number),
+    // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/MsgRemoveNFTFromAuction',
         value: {
@@ -435,20 +437,20 @@ export function NewMsgRemoveNFTFromAuction(input: OpenMarketTxMessageParams): ob
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMsgFinishAuction(input: OpenMarketTxMessageParams): object {
+export function NewMsgFinishAuction(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // account_number: String(input.account_number),
+    // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/MsgFinishAuction',
         value: {
@@ -457,20 +459,20 @@ export function NewMsgFinishAuction(input: OpenMarketTxMessageParams): object {
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMsgMakeBidOnAuction(input: OpenMarketTxMessageParams): object {
+export function NewMsgMakeBidOnAuction(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // account_number: String(input.account_number),
+    // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/MsgMakeBidOnAuction',
         value: {
@@ -487,20 +489,20 @@ export function NewMsgMakeBidOnAuction(input: OpenMarketTxMessageParams): object
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMsgBuyoutOnAuction(input: OpenMarketTxMessageParams): object {
+export function NewMsgBuyoutOnAuction(input: OpenMarketTxMessageParams): Tx {
   return {
-    account_number: String(input.account_number),
-    chain_id: input.chain_id,
+    // account_number: String(input.account_number),
+    // chain_id: input.chain_id,
     fee: {
       amount: [],
       gas: input.gas,
     },
     memo: input.memo,
-    msgs: [
+    msg: [
       {
         type: 'marketplace/MsgBuyoutOnAuction',
         value: {
@@ -511,60 +513,65 @@ export function NewMsgBuyoutOnAuction(input: OpenMarketTxMessageParams): object 
         },
       },
     ],
-    sequence: String(input.sequence),
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMsgIBCTransferFungibleTokens(input: OpenMarketTxMessageParams): object {
+export function NewMsgIBCTransferFungibleTokens(input: OpenMarketTxMessageParams): Tx {
   return {
-    type: 'cosmos-sdk/StdTx',
-    value: {
-      msg: [
-        {
-          sender: input.sender, 
-          receiver: input.receiver, 
+    // account_number: String(input.account_number),
+    // chain_id: input.chain_id,
+    fee: {
+      amount: [],
+      gas: input.gas,
+    },
+    memo: input.memo,
+    msg: [
+      {
+        type: 'ibc/transfer/MsgTransfer',
+        value: {
           amount: [
             {
-              denom: input.price.denom, 
-              amount: String(input.price.amount)
-            }
+              amount: String(input.amount),
+              denom: input.denom,
+            },
           ],
-          source_port: "transfer",
-          dest_height : String(input.destHeight), 
-          source_channel: input.sourceChannel
-        }
-      ],
-      fee: {
-        amount: [],
-        gas: String(input.gas),
+          dest_height: String(input.destHeight),
+          receiver: input.receiver,
+          sender: input.sender,
+          source_channel: input.sourceChannel,
+          source_port: 'transfer',
+        },
       },
-      memo: input.memo,
-    },
+    ],
+    // sequence: String(input.sequence),
   }
 }
 
-export function NewMsgIBCTransferNFT(input: OpenMarketTxMessageParams): object {
+export function NewMsgIBCTransferNFT(input: OpenMarketTxMessageParams): Tx {
   return {
-    type: 'cosmos-sdk/StdTx',
-    value: {
-      msg: [{
-        type: input.type,
+    // account_number: String(input.account_number),
+    // chain_id: input.chain_id,
+    fee: {
+      amount: [],
+      gas: input.gas,
+    },
+    memo: input.memo,
+    msg: [
+      {
+        type: 'marketplace/transfer/MsgTransfer',
         value: {
-          source_port: 'transfernft',
-          source_channel: input.sourceChannel,
+          denom: input.denom,
           destination_height: String(input.destHeight),
           id: input.id,
-          denom: input.denom,
-          sender: input.sender,
           receiver: input.receiver,
+          sender: input.sender,
+          source_channel: input.sourceChannel,
+          source_port: 'transfernft',
         },
-      }],
-      fee: {
-        amount: [],
-        gas: String(input.gas),
       },
-      memo: input.memo,
-    },
+    ],
+    // sequence: String(input.sequence),
   }
 }
 

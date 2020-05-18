@@ -34,8 +34,6 @@ export interface OpenMarketAPIConfig {
 export interface OpenMarketTxConfig {
   readonly lcdUrl: string
   readonly chainId: string
-  readonly path?: string
-  readonly bech32MainPrefix?: string
 }
 
 export interface OpenMarketTxMessageParams {
