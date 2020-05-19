@@ -4,6 +4,7 @@ export const qNftAll = gql`
   query allNft {
     nfts {
       token_id
+      denom
       token_uri
       user {
         address
@@ -19,6 +20,7 @@ export const qNftById = gql`
   query oneNft($tokenId: String!) {
     nfts(where: { token_id: { _like: $tokenId }, deleted_at: { _is_null: true } }) {
       token_id
+      denom
       token_uri
       user {
         address
@@ -81,6 +83,7 @@ export const qNftOffers = gql`
       nft {
         id
         token_id
+        denom
         created_at
         owner_address
         status
@@ -118,6 +121,7 @@ export const qNftBids = gql`
         owner_address
         status
         token_id
+        denom
         created_at
       }
     }
@@ -169,6 +173,7 @@ export const qNfts = gql`
         }
       }
       token_id
+      denom
       price
       status
       created_at
