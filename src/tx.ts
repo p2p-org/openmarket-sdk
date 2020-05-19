@@ -1,3 +1,5 @@
+import { marshalPubKey } from '@tendermint/amino-js'
+import { bytesToBase64 } from '@tendermint/belt'
 import bech32 from 'bech32'
 import { fromSeed } from 'bip32'
 import { generateMnemonic, mnemonicToSeed } from 'bip39'
@@ -53,6 +55,13 @@ export class OpenMarketTxAPI {
     const child = node.derivePath(this.path)
     const words = bech32.toWords(child.identifier)
     return bech32.encode(this.bech32MainPrefix, words)
+  }
+
+  public getNodeInfo(address: string): Promise<any> {
+    const accountsApi = '/node_info'
+    return fetch(this.lcdUrl + accountsApi + address)
+      .then((response) => response.json())
+      .catch(_handleError)
   }
 
   public getAccounts(address: string): Promise<any> {
@@ -154,10 +163,10 @@ export class OpenMarketTxAPI {
           msg: signMessage.msgs,
           signatures: [
             {
-              pub_key: {
+              pub_key: bytesToBase64(marshalPubKey({
                 type: 'tendermint/PubKeySecp256k1',
                 value: getPubKeyBase64(ecpairPriv),
-              },
+              }, false)),
               signature: signatureBase64,
             },
           ],
@@ -165,6 +174,10 @@ export class OpenMarketTxAPI {
       }
     }
 
+    // signedTx.signatures = signedTx.signatures.map(s => ({
+    //   pub_key: bytesToBase64(marshalPubKey(s.pub_key, false)),
+    //   signature: s.signature
+    // }))
     return signedTx
   }
 }

@@ -55,6 +55,8 @@
     "node": ">=8.9"
   },
   "dependencies": {
+    "@tendermint/amino-js": "^0.6.2",
+    "@tendermint/belt": "^0.2.2",
     "apollo-cache-inmemory": "1.6.3",
     "apollo-client": "2.6.4",
     "apollo-link": "1.2.13",

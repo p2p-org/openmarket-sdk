@@ -517,54 +517,59 @@ export function NewMsgBuyoutOnAuction(input: OpenMarketTxMessageParams): object 
 
 export function NewMsgIBCTransferFungibleTokens(input: OpenMarketTxMessageParams): object {
   return {
-    type: 'cosmos-sdk/StdTx',
-    value: {
-      msg: [
-        {
-          sender: input.sender, 
-          receiver: input.receiver, 
+    account_number: String(input.account_number),
+    chain_id: input.chain_id,
+    fee: {
+      amount: [],
+      gas: input.gas,
+    },
+    memo: input.memo,
+    msgs: [
+      {
+        type: 'ibc/transfer/MsgTransfer',
+        value: {
           amount: [
             {
-              denom: input.price.denom, 
-              amount: String(input.price.amount)
-            }
+              amount: String(input.amount),
+              denom: input.denom,
+            },
           ],
-          source_port: "transfer",
-          dest_height : String(input.destHeight), 
-          source_channel: input.sourceChannel
-        }
-      ],
-      fee: {
-        amount: [],
-        gas: String(input.gas),
+          destination_height: String(input.destHeight),
+          receiver: input.receiver,
+          sender: input.sender,
+          source_channel: input.sourceChannel,
+          source_port: 'transfer',
+        },
       },
-      memo: input.memo,
-    },
+    ],
+    sequence: String(input.sequence),
   }
 }
 
 export function NewMsgIBCTransferNFT(input: OpenMarketTxMessageParams): object {
   return {
-    type: 'cosmos-sdk/StdTx',
-    value: {
-      msg: [{
-        type: input.type,
+    account_number: String(input.account_number),
+    chain_id: input.chain_id,
+    fee: {
+      amount: [],
+      gas: input.gas,
+    },
+    memo: input.memo,
+    msgs: [
+      {
+        type: 'marketplace/transfer/MsgTransfer',
         value: {
-          source_port: 'transfernft',
-          source_channel: input.sourceChannel,
+          denom: input.denom,
           destination_height: String(input.destHeight),
           id: input.id,
-          denom: input.denom,
-          sender: input.sender,
           receiver: input.receiver,
+          sender: input.sender,
+          source_channel: input.sourceChannel,
+          source_port: 'transfernft',
         },
-      }],
-      fee: {
-        amount: [],
-        gas: String(input.gas),
       },
-      memo: input.memo,
-    },
+    ],
+    sequence: String(input.sequence),
   }
 }
 
