@@ -255,13 +255,24 @@ export function NewMsgTransferFungibleTokens(input: OpenMarketTxMessageParams): 
     memo: input.memo,
     msgs: [
       {
-        type: 'marketplace/TransferFungibleTokens',
+        // type: 'marketplace/TransferFungibleTokens',
+        // value: {
+        //   amount: input.amount,
+        //   denom: input.denom,
+        //   owner: input.owner,
+        //   recipient: input.recipient,
+        // },
+        type: "cosmos-sdk/MsgSend",
         value: {
-          amount: input.amount,
-          denom: input.denom,
-          owner: input.owner,
-          recipient: input.recipient,
-        },
+          amount: [
+            {
+              amount: input.denom,
+              denom: input.amount
+            }
+          ],
+          from_address: input.owner,
+          to_address: input.recipient
+        }
       },
     ],
     sequence: String(input.sequence),
