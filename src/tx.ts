@@ -127,11 +127,11 @@ export class OpenMarketTxAPI {
     const hash = crypto
       .createHash('sha256')
       .update(JSON.stringify(sortObject(signMessage)))
-      .digest('hex')
-    const buf = Buffer.from(hash, 'hex')
-    const signObj = secp256k1.sign(buf, ecpairPriv)
+      .digest()
+    // const buf = new Uint8Array(hash)
+    const signObj = secp256k1.ecdsaSign(hash, ecpairPriv)
     // const signatureBase64 = Buffer.from(signObj.signature, 'binary').toString('base64');
-    const signatureBase64 = signObj.signature.toString('base64')
+    const signatureBase64 = bytesToBase64(signObj.signature)
     let signedTx = {}
     if (this.chainId.indexOf(MPCHAIN) !== -1) {
       // stdSignMsg.bytes = convertStringToBytes(JSON.stringify(sortObject(signMessage)));
@@ -199,8 +199,8 @@ export class OpenMarketTxAPI {
 //   return myBuffer;
 // }
 //
-function getPubKeyBase64(ecpairPriv: Buffer): string {
-  return secp256k1.publicKeyCreate(ecpairPriv).toString('base64')
+function getPubKeyBase64(privateKey: Uint8Array): string {
+  return bytesToBase64(secp256k1.publicKeyCreate(privateKey))
 }
 
 function sortObject(obj: any): any {
