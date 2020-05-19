@@ -266,8 +266,8 @@ export function NewMsgTransferFungibleTokens(input: OpenMarketTxMessageParams): 
         value: {
           amount: [
             {
-              amount: input.denom,
-              denom: input.amount
+              amount: input.amount,
+              denom: input.denom
             }
           ],
           from_address: input.owner,
