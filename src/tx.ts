@@ -1,9 +1,8 @@
 import { marshalPubKey } from '@tendermint/amino-js'
-import { bytesToBase64 } from '@tendermint/belt'
-import bech32 from 'bech32'
-import { fromSeed } from 'bip32'
+import { bytesToBase64, toCanonicalJSONBytes } from '@tendermint/belt'
+import { encode as bech32Encode, toWords as bech32ToWords } from 'bech32'
+import { BIP32Interface, fromSeed as bip32FromSeed } from 'bip32'
 import { generateMnemonic, mnemonicToSeed } from 'bip39'
-import { ECPair } from 'bitcoinjs-lib'
 import crypto from 'crypto'
 import fetch from 'node-fetch'
 import secp256k1 from 'secp256k1'
@@ -50,11 +49,9 @@ export class OpenMarketTxAPI {
   }
 
   public getAddress(mnemonic: string): string {
-    const seed = mnemonicToSeed(mnemonic)
-    const node = fromSeed(seed)
-    const child = node.derivePath(this.path)
-    const words = bech32.toWords(child.identifier)
-    return bech32.encode(this.bech32MainPrefix, words)
+    const child = this.getECNode(mnemonic)
+    const words = bech32ToWords(child.identifier)
+    return bech32Encode(this.bech32MainPrefix, words)
   }
 
   public getNodeInfo(address: string): Promise<any> {
@@ -79,20 +76,18 @@ export class OpenMarketTxAPI {
   }
 
   public getECPairPriv(mnemonic: string): Buffer | undefined {
-    const seed = mnemonicToSeed(mnemonic)
-    const node = fromSeed(seed)
-    const child = node.derivePath(this.path)
-    if (!child.privateKey) {
-      throw new Error('private key error')
+    const { privateKey } = this.getECNode(mnemonic)
+    if (!privateKey) {
+      throw new Error('could not derive private key');
     }
-    const ecpair = ECPair.fromPrivateKey(child.privateKey, { compressed: false })
-    return ecpair.privateKey
+    return privateKey
   }
 
-  // public getECPairPrivFromPK(privateKey: Buffer): Buffer|undefined {
-  //   const ecpair = ECPair.fromPrivateKey(privateKey, {compressed : false})
-  //   return ecpair.privateKey;
-  // }
+  public getECNode(mnemonic: string): BIP32Interface {
+    const seed = mnemonicToSeed(mnemonic)
+    const node = bip32FromSeed(seed)
+    return node.derivePath(this.path)
+  }
 
   public broadcast(signedTx: object): Promise<any> {
     const broadcastApi = this.chainId.indexOf(MPCHAIN) !== -1 ? '/marketplace/txs' : '/txs'
@@ -124,13 +119,10 @@ export class OpenMarketTxAPI {
 
   public sign(signMessage: OpenMarketTxMessageParams, ecpairPriv: Buffer, modeType = 'sync'): object {
     // The supported return types includes "block"(return after tx commit), "sync"(return afer CheckTx) and "async"(return right away).
-    const hash = crypto
-      .createHash('sha256')
-      .update(JSON.stringify(sortObject(signMessage)))
-      .digest()
-    // const buf = new Uint8Array(hash)
+    const bytes = toCanonicalJSONBytes(signMessage);
+
+    const hash = crypto.createHash('sha256').update(bytes).digest()
     const signObj = secp256k1.ecdsaSign(hash, ecpairPriv)
-    // const signatureBase64 = Buffer.from(signObj.signature, 'binary').toString('base64');
     const signatureBase64 = bytesToBase64(signObj.signature)
     let signedTx = {}
     if (this.chainId.indexOf(MPCHAIN) !== -1) {
@@ -144,10 +136,7 @@ export class OpenMarketTxAPI {
           msg: signMessage.msgs,
           signatures: [
             {
-              pub_key: {
-                type: 'tendermint/PubKeySecp256k1',
-                value: getPubKeyBase64(ecpairPriv),
-              },
+              pub_key: getPubKeyBase64(ecpairPriv),
               signature: signatureBase64,
             },
           ],
@@ -163,10 +152,7 @@ export class OpenMarketTxAPI {
           msg: signMessage.msgs,
           signatures: [
             {
-              pub_key: bytesToBase64(marshalPubKey({
-                type: 'tendermint/PubKeySecp256k1',
-                value: getPubKeyBase64(ecpairPriv),
-              }, false)),
+              pub_key: getPubKeyBase64(ecpairPriv),
               signature: signatureBase64,
             },
           ],
@@ -200,28 +186,12 @@ export class OpenMarketTxAPI {
 // }
 //
 function getPubKeyBase64(privateKey: Uint8Array): string {
-  return bytesToBase64(secp256k1.publicKeyCreate(privateKey))
+  return bytesToBase64(marshalPubKey({
+    type: 'tendermint/PubKeySecp256k1',
+    value: bytesToBase64(secp256k1.publicKeyCreate(privateKey, true)),
+  }, false))
 }
 
-function sortObject(obj: any): any {
-  if (obj === null) {
-    return null
-  }
-  if (typeof obj !== 'object') {
-    return obj
-  }
-  if (Array.isArray(obj)) {
-    return obj.map(sortObject)
-  }
-  const sortedKeys = Object.keys(obj).sort()
-  const result = {}
-  sortedKeys.forEach((key) => {
-    // @ts-ignore
-    // tslint:disable-next-line: no-object-mutation
-    result[key] = sortObject(obj[key])
-  })
-  return result
-}
 
 // module.exports = {
 // 	network: network,
